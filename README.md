@@ -1,3 +1,5 @@
+# How works the code and some theoritical references. 
+
 # Home assignment - Tomato allergies
 
 Open domain image classification
