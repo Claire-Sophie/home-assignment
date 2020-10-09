@@ -1,6 +1,7 @@
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import Model
 import matplotlib.pyplot as plt
+import os
 from tensorflow.keras.applications import ResNet50 , ResNet101
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.python.keras.layers import Dense,  Dropout
@@ -9,12 +10,13 @@ from tensorflow.keras.optimizers import Adam
 train_dir = 'Training'
 validation_dir = 'Test'
 
-def get_labe():
-    None
+def get_labe(train_folder):
+    label = {}
+    for i in range(len(os.listdir(train_folder))):
+        label[i] = os.listdir(train_folder)[i]
 
 def process_data(train_data , validation_data , batch_size , target_size ):
 
-    #datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
     train_datagen = ImageDataGenerator( rescale=1. / 255., rotation_range=40, width_shift_range=0.2,
                                        height_shift_range=0.2, shear_range=0.2, zoom_range=0.2,
                                         horizontal_flip=True, fill_mode='nearest')
@@ -37,7 +39,7 @@ def create_model():
     model_tomato = Dense(128, activation='relu')(model_tomato)
     model_tomato = Dropout(0.5)(model_tomato)
 
-    output = Dense(6, activation='softmax')(model_tomato)
+    output = Dense(2, activation='softmax')(model_tomato)
     model_final = Model(inputs=model_pre.input, outputs=output)
 
     return model_final, model_pre
