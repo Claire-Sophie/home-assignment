@@ -1,5 +1,10 @@
 # How works the code and some theoritical references. 
 
+Database used: fruit360 (loaded from https://data.mendeley.com/datasets/rp73yg93n8/1). The model was trained with 5 classes (tomato , cherry , apple, pineapple, raspberry) for the likelihood betwen this classes et see how the model reacts. 
+
+
+
+
 # Home assignment - Tomato allergies
 
 Open domain image classification
