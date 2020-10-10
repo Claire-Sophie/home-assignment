@@ -2,10 +2,13 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import Model
 import matplotlib.pyplot as plt
 import os
-from tensorflow.keras.applications import ResNet50 , ResNet101
+from tensorflow.keras.applications import ResNet101
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.python.keras.layers import Dense,  Dropout
 from tensorflow.keras.optimizers import Adam
+from keras.preprocessing import image
+import numpy as np
+
 
 train_dir = 'Training'
 validation_dir = 'Test'
@@ -14,6 +17,7 @@ def get_labe(train_folder):
     label = {}
     for i in range(len(os.listdir(train_folder))):
         label[i] = os.listdir(train_folder)[i]
+    return label
 
 def process_data(train_data , validation_data , batch_size , target_size ):
 
@@ -39,10 +43,27 @@ def create_model():
     model_tomato = Dense(128, activation='relu')(model_tomato)
     model_tomato = Dropout(0.5)(model_tomato)
 
-    output = Dense(2, activation='softmax')(model_tomato)
+    output = Dense(5, activation='softmax')(model_tomato)
     model_final = Model(inputs=model_pre.input, outputs=output)
 
     return model_final, model_pre
+
+def has_tomato(path):
+    lab = get_labe(train_dir)
+    img = image.load_img(path, target_size=(224, 224))
+    img_tensor = image.img_to_array(img)
+    img_tensor = np.expand_dims(img_tensor, axis=0)
+    prediction = model_final.predict(img_tensor)
+
+    maxindex = int(np.argmax(prediction))
+
+    label_pred = None
+    for i, j in lab.items():
+        if i == maxindex:
+            label_pred = j
+
+    return label_pred
+
 
 if __name__ == '__main__':
 
@@ -65,5 +86,7 @@ if __name__ == '__main__':
          validation_data=val, validation_steps=len(val),
          verbose=2, callbacks=[EarlyStop, CheckPoint])
 
+    path = 'AL001-02 tomate.jpg'
 
+    print(has_tomato(path))
 
