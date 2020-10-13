@@ -1,6 +1,12 @@
-# How works the code and some theoritical references. 
+# How works the code :  
 
 Database used: fruit360 (loaded from https://data.mendeley.com/datasets/rp73yg93n8/1). The model was trained with 5 classes (tomato , cherry , apple, pineapple, raspberry) for the likelihood betwen this classes et see how the model reacts. 
+
+We used a pretraind model Resnet101 , freezed the last top layer and added layers on top that were tuned to have best converge of accuracy and loss. 
+
+To re train the model, you need to rund the code TomatoModel.py. 
+
+Otherwise, you can load the model that is in a release and import image and use model.predict to have the prediction. 
 
 
 
