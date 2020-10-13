@@ -59,11 +59,14 @@ def has_tomato(path):
     maxindex = int(np.argmax(prediction))
 
     label_pred = None
+    bool = False
     for i, j in lab.items():
         if i == maxindex:
             label_pred = j
+        if label_pred == 'Tomato':
+            bool  = True
 
-    return label_pred
+    return label_pred , bool
 
 
 if __name__ == '__main__':
