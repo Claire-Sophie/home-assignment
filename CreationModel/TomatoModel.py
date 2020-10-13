@@ -2,6 +2,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import Model
 import matplotlib.pyplot as plt
 import os
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from tensorflow.keras.applications import ResNet101
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.python.keras.layers import Dense,  Dropout
@@ -38,9 +39,9 @@ def create_model():
     model_pre =  ResNet101(input_shape=(224 , 224 ,3) , include_top=False, weights='imagenet' , pooling='max')
     model_tomato = model_pre.output
 
-    model_tomato = Dense(128, activation='relu')(model_tomato)
+    model_tomato = Dense(512, activation='relu')(model_tomato)
     model_tomato = Dropout(0.5)(model_tomato)
-    model_tomato = Dense(128, activation='relu')(model_tomato)
+    model_tomato = Dense(512, activation='relu')(model_tomato)
     model_tomato = Dropout(0.5)(model_tomato)
 
     output = Dense(5, activation='softmax')(model_tomato)
@@ -50,11 +51,11 @@ def create_model():
 
 def has_tomato(path):
     lab = get_labe(train_dir)
-    img = image.load_img(path, target_size=(224, 224))
-    img_tensor = image.img_to_array(img)
-    img_tensor = np.expand_dims(img_tensor, axis=0)
-    prediction = model_final.predict(img_tensor)
-
+    f = image.load_img(path, target_size=(224, 224))
+    img = image.img_to_array(f)
+    img = np.expand_dims(img, axis=0)
+    prediction = model_final.predict(img)
+    print(prediction)
     maxindex = int(np.argmax(prediction))
 
     label_pred = None
@@ -74,17 +75,16 @@ if __name__ == '__main__':
     for layer in model_pre.layers:
         layer.trainable = False
 
-    model_final.compile(Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
-
     model_final.compile(Adam(lr=0.0001, decay=0.000001), loss='categorical_crossentropy', metrics=['accuracy'])
 
     EarlyStop = EarlyStopping(monitor='val_accuracy', patience=10, mode='max')
 
     CheckPoint = ModelCheckpoint(filepath='model.h5', monitor='val_accuracy', save_best_only=True, mode='max')
     train_history = model_final.fit \
-        (train, steps_per_epoch=len(train), epochs=20,
+        (train, steps_per_epoch=len(train), epochs=30,
          validation_data=val, validation_steps=len(val),
          verbose=2, callbacks=[EarlyStop, CheckPoint])
+
 
     path = 'AL001-02 tomate.jpg'
 
